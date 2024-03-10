@@ -1,6 +1,15 @@
 import "@/styles/globals.css";
-import type { AppProps } from "next/app";
+import { appWithTranslation } from "next-i18next";
+import NextNProgress from "nextjs-progressbar";
+import { green } from "tailwindcss/colors.js";
 
-export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
-}
+const App = ({ Component, pageProps }) => {
+  return (
+    <>
+      <NextNProgress color={green[500]} height={4} />
+      <Component {...pageProps} />;
+    </>
+  );
+};
+
+export default appWithTranslation(App);

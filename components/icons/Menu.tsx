@@ -1,4 +1,4 @@
-const Menu = ({ className }) => {
+const Menu = ({ className }: {className: string}) => {
   <svg className={className} viewBox="0 0 512 512">
     <title>Menu</title>
     <path

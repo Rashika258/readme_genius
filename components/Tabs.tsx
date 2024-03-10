@@ -2,7 +2,18 @@ import { useTranslation } from "next-i18next";
 import ColumnHeader from "./ColumnHeader";
 import { TAB } from "@/utils/constants";
 
-const Tabs = ({
+interface TabsProps {
+  selectedTab: string;
+  setSelectedTab: Function;
+  focusedSectionSlug: string;
+  toggleTheme: Function;
+  toggleState: {
+    theme: string;
+    img: string;
+  };
+}
+
+const Tabs: React.FC<TabsProps> = ({
   selectedTab,
   setSelectedTab,
   focusedSectionSlug,
@@ -21,9 +32,9 @@ const Tabs = ({
         >
           {t("editor-column-editor")}
         </ColumnHeader.Tab>
-        {focusedSectionSlug != "noEdit" ? (
+        {focusedSectionSlug !== "noEdit" ? (
           <button
-            onClick={toggleTheme}
+            onClick={() => toggleTheme()}
             aria-label="Color Mode"
             className="toggle-dark-mode focus:outline-none transition transform hover:-translate-y-1 motion-reduce:transition-none motion-reduce:transform-none"
           >

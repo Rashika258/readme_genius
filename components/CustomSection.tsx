@@ -9,6 +9,12 @@ export const CustomSection = ({
   setFocusedSectionSlug,
   setPageRefreshed,
   setAddAction,
+}:{
+  setTemplates: any,
+  setSelectedSectionSlugs: any,
+  setFocusedSectionSlug: any,
+  setPageRefreshed : any,
+  setAddAction: any,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [title, setTitle] = useState("");
@@ -28,14 +34,14 @@ export const CustomSection = ({
     };
 
     localStorage.setItem("current-focused-slug", section.slug);
-    setTemplates((prev) => {
+    setTemplates((prev: any) => {
       const newTemplates = [...prev, section];
       saveBackup(newTemplates);
       return newTemplates;
     });
     setPageRefreshed(false);
     setAddAction(true);
-    setSelectedSectionSlugs((prev) => [...prev, section.slug]);
+    setSelectedSectionSlugs((prev: any) => [...prev, section.slug]);
     setFocusedSectionSlug(localStorage.getItem("current-focused-slug"));
   };
 

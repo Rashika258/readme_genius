@@ -1,17 +1,23 @@
 import { useRef, useState } from "react";
 
-export default function RawPreview({ text }) {
-  const textAreaRef = useRef(null);
-  const [copySuccess, setCopySuccess] = useState(false);
+interface RawPreviewProps {
+  text: string;
+}
 
-  const copyToClipBoard = (e) => {
-    textAreaRef.current.select();
-    document.execCommand("copy");
-    e.target.focus();
-    setCopySuccess(true);
-    setTimeout(() => {
-      setCopySuccess(false);
-    }, 3000);
+const RawPreview: React.FC<RawPreviewProps> = ({ text }) => {
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const [copySuccess, setCopySuccess] = useState<boolean>(false);
+
+  const copyToClipBoard = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (textAreaRef.current) {
+      textAreaRef.current.select();
+      document.execCommand("copy");
+      e.currentTarget.focus();
+      setCopySuccess(true);
+      setTimeout(() => {
+        setCopySuccess(false);
+      }, 3000);
+    }
   };
 
   return (
@@ -61,4 +67,6 @@ export default function RawPreview({ text }) {
       />
     </div>
   );
-}
+};
+
+export default RawPreview;

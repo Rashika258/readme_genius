@@ -1,13 +1,32 @@
-import useDeviceDetect from "@/hooks/useDeviceDetect";
-import { TAB } from "@/utils/constants";
-import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import Tabs from "./Tabs";
 import ColumnHeader from "./ColumnHeader";
 import { EditorColumn } from "./EditorColumn";
 import { PreviewColumn } from "./PreviewColumn";
+import { useTranslation } from "next-i18next";
+import useDeviceDetect from "@/hooks/useDeviceDetect";
+import { TAB } from "@/utils/constants";
 
-const EditorPreviewContainer = ({
+interface Section {
+  slug: string;
+  markdown: string;
+}
+
+interface EditorPreviewContainerProps {
+  templates: any;
+  setTemplates: Dispatch<SetStateAction<Section[]>>;
+  getTemplate: Function;
+  focusedSectionSlug: string;
+  selectedSectionSlugs: string[];
+  setSelectedSectionSlugs: Function;
+}
+
+interface ToggleState {
+  theme: string;
+  img: string;
+}
+
+const EditorPreviewContainer: React.FC<EditorPreviewContainerProps> = ({
   templates,
   setTemplates,
   getTemplate,
@@ -17,12 +36,12 @@ const EditorPreviewContainer = ({
 }) => {
   const { t } = useTranslation("editor");
 
-  const [toggleState, setToggleState] = useState({
+  const [toggleState, setToggleState] = useState<ToggleState>({
     theme: "vs-dark",
     img: "toggle_sun.svg",
   });
 
-  const [selectedTab, setSelectedTab] = useState(TAB.PREVIEW);
+  const [selectedTab, setSelectedTab] = useState<string>(TAB.PREVIEW);
   const { isMobile } = useDeviceDetect();
 
   const toggleTheme = () => {
@@ -33,8 +52,8 @@ const EditorPreviewContainer = ({
     setSelectedTab(isMobile ? TAB.EDITOR : TAB.PREVIEW);
   }, [isMobile]);
 
-  const showEditorColumn = !isMobile || selectedTab === TAB.EDITOR;
-  const showPreviewColumn =
+  const showEditorColumn: boolean = !isMobile || selectedTab === TAB.EDITOR;
+  const showPreviewColumn: boolean =
     !isMobile || selectedTab === TAB.PREVIEW || selectedTab === TAB.RAW;
 
   return (
@@ -54,7 +73,7 @@ const EditorPreviewContainer = ({
           {!isMobile ? (
             <ColumnHeader.Heading>
               {t("editor-column-editor")}
-              {focusedSectionSlug != "noEdit" ? (
+              {focusedSectionSlug !== "noEdit" ? (
                 <button
                   onClick={toggleTheme}
                   aria-label="Color Mode"
@@ -115,7 +134,7 @@ const EditorPreviewContainer = ({
   );
 };
 
-const toggleDarkMode = (toggleState, setToggleState) => {
+const toggleDarkMode = (toggleState: ToggleState, setToggleState: Function) => {
   if (toggleState.theme === "vs-dark") {
     setToggleState({ theme: "light", img: "toggle_moon.svg" });
     localStorage.setItem("editor-color-theme", "light");

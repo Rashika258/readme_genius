@@ -2,44 +2,52 @@ import useDeviceDetect from "@/hooks/useDeviceDetect";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useTranslation } from "next-i18next";
 import { useEffect, useRef, useState } from "react";
-import { Editor } from "@monaco-editor/react";
-export const EditorColumn = ({
+import { Editor, Monaco } from "@monaco-editor/react";
+
+interface Section {
+  slug: string;
+  markdown: string;
+}
+
+interface EditorColumnProps {
+  focusedSectionSlug: string;
+  templates: Section[];
+  setTemplates: React.Dispatch<React.SetStateAction<Section[]>>;
+  theme: string;
+  setToggleState: React.Dispatch<React.SetStateAction<{ theme: string; img: string }>>;
+}
+
+export const EditorColumn: React.FC<EditorColumnProps> = ({
   focusedSectionSlug,
   templates,
   setTemplates,
   theme,
   setToggleState,
-}:{
-    focusedSectionSlug: any;
-    templates: any;
-    setTemplates: any;
-    theme: any;
-    setToggleState: any;
 }) => {
   const { t } = useTranslation("editor");
 
-  const getMarkdown = () => {
+  const getMarkdown = (): string => {
     const section = templates.find((s) => s.slug === focusedSectionSlug);
     return section ? section.markdown : "";
   };
 
-  const [markdown, setMarkdown] = useState(getMarkdown());
-  const [isFocused, setFocus] = useState(false);
+  const [markdown, setMarkdown] = useState<string>(getMarkdown());
+  const [isFocused, setFocus] = useState<boolean>(false);
 
   const { isMobile } = useDeviceDetect();
-  const [MonacoEditor, setMonacoEditor] = useState(null);
+  const [MonacoEditor, setMonacoEditor] = useState< Monaco | null>(null);
   const { saveBackup } = useLocalStorage();
 
-  const monacoEditorRef = useRef(null);
-  const textEditorRef = useRef(null);
+  const monacoEditorRef = useRef<Monaco | null>(null);
+  const textEditorRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleEditorDidMount = (editor) => {
+  const handleEditorDidMount = (editor: any | null) => {
     monacoEditorRef.current = editor;
     setEditorColorThemeFromLocalStorage();
   };
 
   const setEditorColorThemeFromLocalStorage = () => {
-    if (localStorage.getItem("editor-color-theme") == "light") {
+    if (localStorage.getItem("editor-color-theme") === "light") {
       setToggleState({ theme: "light", img: "toggle_moon.svg" });
     }
   };
@@ -58,9 +66,7 @@ export const EditorColumn = ({
 
   useEffect(() => {
     if (!isMobile && !MonacoEditor) {
-      import("@monaco-editor/react").then((EditorComp) => {
-        setMonacoEditor(EditorComp.default);
-      });
+      import("@monaco-editor/react").then((EditorComp) => setMonacoEditor(EditorComp.default));
     }
   }, [MonacoEditor, isMobile, setMonacoEditor]);
 
@@ -71,7 +77,7 @@ export const EditorColumn = ({
 
   return (
     <>
-      {focusedSectionSlug == "noEdit" ? (
+      {focusedSectionSlug === "noEdit" ? (
         <p className="font-sm text-green-500 max-w-[28rem] text-center mx-auto mt-10">
           {t("editor-select")}
         </p>
@@ -80,7 +86,6 @@ export const EditorColumn = ({
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
           ref={textEditorRef}
-        //   type="text"
           onChange={(e) => onEdit(e.target.value)}
           value={markdown}
           className={`full-screen rounded-sm border border-gray-500 w-full p-6 resize-none ${

@@ -1,16 +1,23 @@
+/* eslint-disable react/no-children-prop */
 import { TAB } from "@/utils/constants";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import RawPreview from "./RawPreview";
 
-export const PreviewColumn = ({
+interface PreviewColumnProps {
+  selectedSectionSlugs: string[];
+  getTemplate: (section: string) => any;
+  selectedTab: string;
+}
+
+export const PreviewColumn: React.FC<PreviewColumnProps> = ({
   selectedSectionSlugs,
   getTemplate,
   selectedTab,
 }) => {
   selectedSectionSlugs = [...new Set(selectedSectionSlugs)];
-  const markdown = selectedSectionSlugs.reduce((acc, section) => {
+  const markdown: string = selectedSectionSlugs.reduce((acc: string, section: string) => {
     const template = getTemplate(section);
     if (template) {
       return `${acc}${template?.markdown}`;
@@ -19,7 +26,7 @@ export const PreviewColumn = ({
     }
   }, ``);
 
-  const showPreview = selectedTab == TAB.PREVIEW;
+  const showPreview: boolean = selectedTab === TAB.PREVIEW;
 
   return (
     <div
@@ -32,7 +39,7 @@ export const PreviewColumn = ({
           remarkPlugins={[remarkGfm]}
           children={markdown}
           renderers={{
-            link: (props) => (
+            link: (props: any) => (
               <Link href={props.href} target="__blank">
                 {props.children}
               </Link>

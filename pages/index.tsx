@@ -1,9 +1,10 @@
-import Image from "next/image";
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable @next/next/no-img-element */
 import { Inter } from "next/font/google";
 import Link from "next/link";
-import { LanguageDropDown } from "@/components/LanguageDropDown";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
+import { LanguageDropDown } from "@/components/LanguageDropdown";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -133,7 +134,7 @@ export default function Home() {
   );
 }
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),

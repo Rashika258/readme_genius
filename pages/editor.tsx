@@ -9,17 +9,19 @@ import EditorPreviewContainer from "@/components/EditorPreviewContainer";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 
-export default function Editor({ sectionTemplate }) {
+interface EditorProps {
+  sectionTemplate: any;
+}
+
+export default function Editor({ sectionTemplate }: EditorProps) {
   const { t } = useTranslation("editor");
-  const [markdown, setMarkdown] = useState("");
-  const [selectedSectionSlugs, setSelectedSectionSlugs] = useState([]);
-  const [sectionSlugs, setSectionSlugs] = useState(
-    sectionTemplates.map((t) => t.slug)
-  );
-  const [focusedSectionSlug, setFocusedSectionSlug] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [templates, setTemplates] = useState(sectionTemplates);
-  const [showDrawer, toggleDrawer] = useState(false);
+  const [markdown, setMarkdown] = useState<string>("");
+  const [selectedSectionSlugs, setSelectedSectionSlugs] = useState<string[]>([]);
+  const [sectionSlugs, setSectionSlugs] = useState<string[]>(sectionTemplates.map((t) => t.slug));
+  const [focusedSectionSlug, setFocusedSectionSlug] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [templates, setTemplates] = useState<any[]>(sectionTemplates);
+  const [showDrawer, toggleDrawer] = useState<boolean>(false);
   const { backup } = useLocalStorage();
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export default function Editor({ sectionTemplate }) {
     }
   }, [backup]);
 
-  const getTemplate = (slug) => {
+  const getTemplate = (slug: string) => {
     return templates.find((t) => t.slug === slug);
   };
 
@@ -37,9 +39,9 @@ export default function Editor({ sectionTemplate }) {
   }, []);
 
   useEffect(() => {
-    let currentSlugList = localStorage.getItem("current-slug-list");
+    let currentSlugList = localStorage.getItem("current-slug-list") || "";
     if (
-      currentSlugList.indexOf("title-and-description") == -1 &&
+      currentSlugList.indexOf("title-and-description") === -1 &&
       selectedSectionSlugs.indexOf("title-and-description") > -1
     ) {
       selectedSectionSlugs.splice(
@@ -47,12 +49,12 @@ export default function Editor({ sectionTemplate }) {
         1
       );
     }
-    setFocusedSectionSlug(
-      localStorage.getItem("current-slug-list").split(",")[0]
-    );
-    localStorage.setItem("current-slug-list", selectedSectionSlugs);
+    setFocusedSectionSlug(localStorage.getItem("current-slug-list")?.split(",")[0] || null);
+    localStorage.setItem("current-slug-list", selectedSectionSlugs.join(","));
   }, [selectedSectionSlugs]);
+
   const drawerClass = showDrawer ? "" : "-translate-x-full md:transform-none";
+
   return (
     <div className="w-full h-full">
       <Head></Head>
@@ -95,7 +97,7 @@ export default function Editor({ sectionTemplate }) {
   );
 }
 
-export const getStaticProps = async ({ locale }) => {
+export const getStaticProps = async ({ locale }: { locale: string }) => {
   const sectionTemplate = sectionTemplates;
   const i18n = await serverSideTranslations(locale, ["editor"]);
   return {

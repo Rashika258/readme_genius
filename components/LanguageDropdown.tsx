@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export const languageSupports = [
     {
       label: "English",
@@ -14,7 +16,7 @@ export const languageSupports = [
       <div className="group inline-block relative">
         <button className="text-gray-800 py-2 px-4 rounded inline-flex items-center">
           <span className="mr-1">
-            <img
+            <Image
               className="w-auto h-10 mr-1"
               src="language.svg"
               alt="language selector"
